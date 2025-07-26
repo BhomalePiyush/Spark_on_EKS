@@ -1,0 +1,26 @@
+project refrances:-
+    kubernetes deployment spark (kubeflow):-
+                 https://www.kubeflow.org/docs/components/spark-operator/user-guide/writing-sparkapplication/
+                 https://github.com/kubeflow/spark-operator/blob/master
+    spark docker image:-
+                 https://hub.docker.com/r/apache/spark-py
+                 https://hub.docker.com/r/apache/spark/tags
+    spark dynamic allocation:-
+                 https://spark.apache.org/docs/latest/job-scheduling.html#dynamic-resource-allocation
+    kubernetes monitoring :-
+                 https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/
+                 video:- https://www.youtube.com/watch?v=hfKASyWzOIs
+
+
+https://tech.olx.com/running-spark-on-kubernetes-a-fully-functional-example-and-why-it-makes-sense-for-olx-d56b6a61fcbe
+
+sudo chmod 777 /var/run/docker.sock
+
+openjdk:11-jre-slim@sha256:93af7df2308c5141a751c4830e6b6c5717db102b3b31f012ea29d842dc4f2b02
+
+https://archive.apache.org/dist/spark/spark-3.5.1
+
+steps:-
+
+docker compose -f build_base_docker/build-spark-base-image.yml build
+docker compose -f build_base_docker/build-spark-base-image.yml push

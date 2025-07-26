@@ -1,0 +1,14 @@
+services:
+  spark-debian-12:
+    #image: ${DOCKER_REPO}/spark-kubernetes/spark-image:${IMAGE_VERSION}
+    image: ${MY_DOCKER_REPO}/spak-debian:${MY_REPO_TAG}
+    #image: piyushbhomale/spak-ubuntu:${MY_REPO_TAG}
+    build:
+      context: ..
+      dockerfile: build_base_docker/spark-base-Dockerfile
+      args:
+        #IMAGE_NAME: ubuntu/jre
+        IMAGE_NAME: bitnami/java
+        IMAGE_VERSION: 11-debian-12
+        SPARK_VERSION: 3.5.1
+        HADOOP_VERSION: 3

@@ -1,0 +1,37 @@
+ARG IMAGE_NAME
+
+ARG IMAGE_VERSION
+
+FROM --platform=$BUILDPLATFORM ${IMAGE_NAME}:${IMAGE_VERSION}
+
+#USER root
+
+RUN mkdir code
+
+COPY build_base_docker/build_kubernetes_image.sh build_base_docker/install_docker_debian.sh code/
+
+RUN chmod +x code/install_docker_debian.sh \
+    && chmod +x code/build_kubernetes_image.sh \
+    && apt-get update \
+    && apt-get -y install sudo
+
+RUN code/install_docker_debian.sh\
+    && rm -rf /var/lib/docker
+
+#RUN curl -fsSL https://get.docker.com -o get-docker.sh \
+#    && sh get-docker.sh \
+#    && rm -rf /var/lib/docker
+
+COPY build_base_docker/pysparkDockerfile /opt/spark/kubernetes/dockerfiles/spark/bindings/python/Dockerfile
+
+
+#RUN useradd docker_usr \
+#    && usermod -g docker docker_usr \
+#    && chown -R docker_usr:docker . \
+#    && usermod -aG sudo docker_usr
+
+#USER docker_usr
+
+RUN docker --help
+
+CMD ["bash","code/build_kubernetes_image.sh"]

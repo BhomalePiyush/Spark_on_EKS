@@ -1,0 +1,17 @@
+ARG IMAGE_NAME
+
+ARG IMAGE_VERSION
+
+FROM --platform=$BUILDPLATFORM ${IMAGE_NAME}:${IMAGE_VERSION}
+
+WORKDIR /app
+
+ENV SPARK_HOME=/opt/spark \
+    PYTHONHASHSEED=1 \
+    SPARK_VERSION=3.5.1 \
+    HADOOP_VERSION=3
+
+RUN wget --no-verbose -O apache-spark.tgz "https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" \
+&& mkdir -p /opt/spark \
+&& tar -xf apache-spark.tgz -C /opt/spark --strip-components=1 \
+&& rm apache-spark.tgz

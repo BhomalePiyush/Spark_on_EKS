@@ -1,0 +1,17 @@
+# docker-compose.yml
+# apache/spark:3.5.3-scala2.12-java11-python3-r-ubuntu
+services:
+  spark-on-k8s:
+    #image: ${DOCKER_REPO}/spark-kubernetes/spark-image:${IMAGE_VERSION}
+    privileged: true
+    environment:
+      IMAGE_VERSION: ${MY_REPO_TAG}
+      DOCKER_REPO: ${MY_DOCKER_REPO}
+      DOCKER_PASSWORD: ${MY_DOCKER_PASS}
+    build:
+      context: ..
+      dockerfile: build_base_docker/kubernetes-base-Dockerfile
+      args:
+        #IMAGE_NAME: ${MY_DOCKER_REPO}/spak-ubuntu
+        IMAGE_NAME: ${MY_DOCKER_REPO}/spak-debian
+        IMAGE_VERSION: ${MY_REPO_TAG}
