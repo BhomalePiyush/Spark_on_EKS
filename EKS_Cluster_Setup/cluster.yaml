@@ -1,0 +1,30 @@
+# cluster.yaml
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: ${CLUSTER_NAME}
+  region: ${AWS_REGION}
+  version: "1.33"
+
+iam:
+  serviceRoleARN: ${CLUSTER_ROLE_ARN}
+
+autoModeConfig:
+  enabled: true
+  nodeRoleARN: ${NODE_ROLE_ARN}
+
+accessConfig:
+  authenticationMode: API_AND_CONFIG_MAP
+
+vpc:
+  id: "<asociated VPC ID>"
+  controlPlaneSubnetIDs: [ subnet-1234, subnet-5678 ]
+  controlPlaneSecurityGroupIDs: [ sg-1234, sg-5678 ]
+#  securityGroup:
+#  subnets:
+#    public:
+#      us-west-2a:
+#        id: "subnet-0153e560b3129a696"
+#      us-west-2c:
+#        id: "subnet-009fa0199ec203c37"

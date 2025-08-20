@@ -1,0 +1,3 @@
+MY_DOCKER_REPO=<yourdockerrepo>
+MY_DOCKER_PASS=<dockerpassword>
+MY_REPO_TAG=<your_repo_tag>

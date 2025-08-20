@@ -8,7 +8,7 @@ FROM --platform=$BUILDPLATFORM ${IMAGE_NAME}:${IMAGE_VERSION}
 
 RUN mkdir code
 
-COPY build_base_docker/build_kubernetes_image.sh build_base_docker/install_docker_debian.sh code/
+COPY build_image_for_Kubernetes/build_kubernetes_image.sh build_image_for_Kubernetes/install_docker_debian.sh code/
 
 RUN chmod +x code/install_docker_debian.sh \
     && chmod +x code/build_kubernetes_image.sh \
@@ -22,7 +22,8 @@ RUN code/install_docker_debian.sh\
 #    && sh get-docker.sh \
 #    && rm -rf /var/lib/docker
 
-COPY build_base_docker/pysparkDockerfile /opt/spark/kubernetes/dockerfiles/spark/bindings/python/Dockerfile
+COPY build_image_for_Kubernetes/pysparkDockerfile /opt/spark/kubernetes/dockerfiles/spark/bindings/python/Dockerfile
+
 
 
 #RUN useradd docker_usr \

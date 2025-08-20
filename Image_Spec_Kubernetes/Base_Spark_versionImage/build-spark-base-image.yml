@@ -5,7 +5,7 @@ services:
     #image: piyushbhomale/spak-ubuntu:${MY_REPO_TAG}
     build:
       context: ..
-      dockerfile: build_base_docker/spark-base-Dockerfile
+      dockerfile: Base_Spark_versionImage/spark-base-Dockerfile
       args:
         #IMAGE_NAME: ubuntu/jre
         IMAGE_NAME: bitnami/java

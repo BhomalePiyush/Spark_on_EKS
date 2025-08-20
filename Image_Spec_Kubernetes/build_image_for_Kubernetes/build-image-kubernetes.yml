@@ -10,7 +10,7 @@ services:
       DOCKER_PASSWORD: ${MY_DOCKER_PASS}
     build:
       context: ..
-      dockerfile: build_base_docker/kubernetes-base-Dockerfile
+      dockerfile: build_image_for_Kubernetes/kubernetes-base-Dockerfile
       args:
         #IMAGE_NAME: ${MY_DOCKER_REPO}/spak-ubuntu
         IMAGE_NAME: ${MY_DOCKER_REPO}/spak-debian
