@@ -55,14 +55,16 @@ eksctl create cluster --name=${EKS_CLUSTER_NAME} --enable-auto-mode
 
 export AWS_REGION=$(aws configure get region)
 
-aws eks create-cluster \
-  --enable-auto-mode \
-  --region ${AWS_REGION} \
-  --name ${EKS_CLUSTER_NAME} \
-  --kubernetes-version 1.33 \
-  --role-arn ${CLUSTER_ROLE_ARN} \
-  --resources-vpc-config '{"subnetIds": ["subnet-ExampleID1","subnet-ExampleID2"], "securityGroupIds": ["sg-ExampleID1"], "endpointPublicAccess": true, "endpointPrivateAccess": true}' \
-  --compute-config '{"enabled": true, "nodeRoleArn": "arn:aws:iam::111122223333:role/AmazonEKSAutoNodeRole", "nodePools": ["general-purpose", "system"]}' \
-  --kubernetes-network-config '{"elasticLoadBalancing": {"enabled": true}}' \
-  --storage-config '{"blockStorage": {"enabled": true}}' \
-  --access-config '{"authenticationMode": "API_AND_CONFIG_MAP"}'
+eksctl create cluster -f create_cluster.yaml
+
+#aws eks create-cluster \
+#  --enable-auto-mode \
+#  --region ${AWS_REGION} \
+#  --name ${EKS_CLUSTER_NAME} \
+#  --kubernetes-version 1.33 \
+#  --role-arn ${CLUSTER_ROLE_ARN} \
+#  --resources-vpc-config '{"subnetIds": ["subnet-ExampleID1","subnet-ExampleID2"], "securityGroupIds": ["sg-ExampleID1"], "endpointPublicAccess": true, "endpointPrivateAccess": true}' \
+#  --compute-config '{"enabled": true, "nodeRoleArn": "arn:aws:iam::111122223333:role/AmazonEKSAutoNodeRole", "nodePools": ["general-purpose", "system"]}' \
+#  --kubernetes-network-config '{"elasticLoadBalancing": {"enabled": true}}' \
+#  --storage-config '{"blockStorage": {"enabled": true}}' \
+#  --access-config '{"authenticationMode": "API_AND_CONFIG_MAP"}'
