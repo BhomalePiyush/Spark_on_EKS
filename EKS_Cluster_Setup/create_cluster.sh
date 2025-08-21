@@ -104,6 +104,8 @@ eksctl create iamidentitymapping -f user_identity_mappings.yaml
 #  --access-config '{"authenticationMode": "API_AND_CONFIG_MAP"}'
 
 # deploy pod identity agent for seamless Aws services access to pods
+# comment out this if do not want to use it will directly use underlying EC2 instance role
+# role if using EKS on Fargate mod this is mandatory
 aws eks create-addon --cluster-name cluster-name --addon-name eks-pod-identity-agent
 
 kubectl get pods -n kube-system | grep 'eks-pod-identity-agent'
