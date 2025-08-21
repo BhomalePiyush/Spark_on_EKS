@@ -3,6 +3,7 @@ cd EKS_Cluster_Setup
 
 export CLUSTER_ROLENAME=AmazonEKSAutoClusterRoleSparkPOC
 export NODE_ROLENAME=AmazonEKSAutoNodeRoleSparkPOC
+export ACCOUNT_NUMBER=$(aws sts get-caller-identity --query Account --output text)
 
 # Cluster IAM Role Setup
 aws iam create-role \
@@ -56,6 +57,25 @@ eksctl create cluster --name=${EKS_CLUSTER_NAME} --enable-auto-mode
 export AWS_REGION=$(aws configure get region)
 
 eksctl create cluster -f create_cluster.yaml
+
+
+FINAL_STATE=("ACTIVE" "FAILED")
+while true; do
+  STATUS=$(aws eks describe-cluster --name "${CLUSTER_NAME}" --query "cluster.status" --output text)
+  echo "current status: ${STATUS}"
+  if [[ " ${FINAL_STATE[@]} " =~ " ${STATUS} " ]]; then
+    if [[ "${STATUS}" == "FALIED" ]]; then
+      exit 1
+    fi
+    break
+  fi
+  sleep 10 # wait for 10 seconds
+done
+
+export ACCOUNT_NUMBER=$(aws sts get-caller-identity --query Account --output text)
+
+# add new users
+eksctl create iamidentitymapping -f user_identity_mappings.yaml
 
 #aws eks create-cluster \
 #  --enable-auto-mode \
