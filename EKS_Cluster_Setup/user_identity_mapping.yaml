@@ -6,12 +6,12 @@ metadata:
   region: us-east-1
 
 iamIdentityMappings:
-#  - arn: arn:aws:iam::${ACCOUNT_NUMBER}:role/${CLUSTER_ROLE_ARN}
-#    groups:
-#      - system:bootstrapper
+  - arn: arn:aws:iam::${ACCOUNT_NUMBER}:role/${CLUSTER_ROLE_ARN}
+    groups:
+      - system:bootstrapper
 #      - system:nodes
-#    username: system:node:{{EC2PrivateDNSName}}
-#    noDuplicateARNs: true # prevents shadowing of ARNs
+    username: system:node:{{EC2PrivateDNSName}}
+    noDuplicateARNs: true # prevents shadowing of ARNs
 
   - arn: arn:aws:iam::${ACCOUNT_NUMBER}:user/myUser@domain.com
     username: myUser

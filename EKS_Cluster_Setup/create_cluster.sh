@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 cd EKS_Cluster_Setup
 
+export CLUSTER_NAME=spark-on-eks-demo
 export CLUSTER_ROLENAME=AmazonEKSAutoClusterRoleSparkPOC
 export NODE_ROLENAME=AmazonEKSAutoNodeRoleSparkPOC
 export ACCOUNT_NUMBER=$(aws sts get-caller-identity --query Account --output text)
@@ -72,7 +73,20 @@ while true; do
   sleep 10 # wait for 10 seconds
 done
 
-export ACCOUNT_NUMBER=$(aws sts get-caller-identity --query Account --output text)
+
+oidc_id=$(aws eks describe-cluster --name ${CLUSTER_NAME} --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
+echo $oidc_id
+provider=$(aws iam list-open-id-connect-providers | grep $oidc_id | cut -d "/" -f4)
+if [ -z "$provider" ]; then
+  echo "$oidc_id not found in identity provider creating it...."
+  eksctl utils associate-iam-oidc-provider --cluster $cluster_name --approve
+  # alternative using IAM
+#  url=$(aws eks describe-cluster --name ${CLUSTER_NAME} --query "cluster.identity.oidc.issuer" --output text)
+#  aws iam create-open-id-connect-provider \
+#    --url ${url} \
+#    --client-id-list sts.amazonaws.com \
+#    --thumbprint-list <THUMBPRINT>
+fi
 
 # add new users
 eksctl create iamidentitymapping -f user_identity_mappings.yaml
@@ -88,3 +102,10 @@ eksctl create iamidentitymapping -f user_identity_mappings.yaml
 #  --kubernetes-network-config '{"elasticLoadBalancing": {"enabled": true}}' \
 #  --storage-config '{"blockStorage": {"enabled": true}}' \
 #  --access-config '{"authenticationMode": "API_AND_CONFIG_MAP"}'
+
+# deploy pod identity agent for seamless Aws services access to pods
+aws eks create-addon --cluster-name cluster-name --addon-name eks-pod-identity-agent
+
+kubectl get pods -n kube-system | grep 'eks-pod-identity-agent'
+
+cd ..
