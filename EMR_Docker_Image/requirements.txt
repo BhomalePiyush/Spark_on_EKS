@@ -1,0 +1,5 @@
+# add python packages
+great-expectations
+psycopg2-binary
+findspark
+mlflow

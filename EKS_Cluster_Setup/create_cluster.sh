@@ -5,6 +5,7 @@ export CLUSTER_NAME=spark-on-eks-demo
 export CLUSTER_ROLENAME=AmazonEKSAutoClusterRoleSparkPOC
 export NODE_ROLENAME=AmazonEKSAutoNodeRoleSparkPOC
 export ACCOUNT_NUMBER=$(aws sts get-caller-identity --query Account --output text)
+export AWS_REGION=$(aws configure get region)
 
 # Cluster IAM Role Setup
 aws iam create-role \
@@ -54,8 +55,6 @@ aws iam attach-role-policy \
     --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
 
 eksctl create cluster --name=${EKS_CLUSTER_NAME} --enable-auto-mode
-
-export AWS_REGION=$(aws configure get region)
 
 eksctl create cluster -f create_cluster.yaml
 
