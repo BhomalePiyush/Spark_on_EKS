@@ -46,7 +46,7 @@ aws emr-containers update-role-trust-policy \
        --namespace ${EMR_ON_EKS_NAMESPACE} \
        --role-name ${EMR_ON_EKS_ROLE_NAME}
 
-aws emr-containers create-virtual-cluster \
+virtual_cluster_id=(aws emr-containers create-virtual-cluster \
       --name ${VIRTUAL_CLUSTER_NAME} \
       --container-provider '{
           "id": "spark-on-eks-demo",
@@ -56,6 +56,12 @@ aws emr-containers create-virtual-cluster \
                   "namespace": "ns-emr-on-eks"
               }
           }
-      }'
+      }' \
+      --query 'id' --output text)
 
+export VIRTUAL_CLUSTER_ID=virtual_cluster_id
+
+echo "Virtual cluster ID is ->> ${VIRTUAL_CLUSTER_ID}"
+
+# python3 run_job_emr_on_eks_job.py
 cd ..
