@@ -17,13 +17,15 @@ kubectl cluster-info
 kubectl create namespace ${EMR_ON_EKS_NAMESPACE}
 
 # create EMR on EKS IAM Role
-
-eksctl create iamidentitymapping -f emr_identity_mappings.yaml
+envsubset emr_identity_mappings.yaml > emr_identity_mappings_env.yaml
+eksctl create iamidentitymapping -f emr_identity_mappings_env.yaml
+rm emr_identity_mappings_env.yaml
 # disable if below and enable second command if do not want to use
 # pod identity agent
 aws iam create-role \
     --role-name ${EMR_ON_EKS_ROLE_NAME} \
-    --assume-role-policy-document file://pod-identity-trust-policy.json
+    --assume-role-policy-document file://pod-identity-trust-policy.json \
+    --discription "emr on eks role for demo"
 
 #aws iam create-role \
 #    --role-name ${EMR_ON_EKS_ROLE_NAME} \

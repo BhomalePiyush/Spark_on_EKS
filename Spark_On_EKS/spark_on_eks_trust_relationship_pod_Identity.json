@@ -1,0 +1,36 @@
+{
+  "Version": "2012-10-17",
+  "Statment": [
+      {
+       "Effect": "Allow",
+       "Principal": {
+         "Service": "elasticmapreduce.amazonaws.com"
+       },
+       "Action": "sts:AssumeRole"
+     },
+    {
+        "Sid": "AllowEksAuthToAssumeRoleForPodIdentity",
+        "Effect": "Allow",
+        "Principal": {
+            "Service": "pods.eks.amazonaws.com"
+        },
+        "Action": [
+            "sts:AssumeRole",
+            "sts:TagSession"
+        ]
+    },
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam:${ACCOUNT_NUMBER}:oicd-provider/${oidc_id}"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "${oidc_id}:aud": "sts:amazon.com",
+          "${oidc_id}:sub": "system:serviceaccount:${EKS_NAMESPACE}:${SERVICE_ACCOUNT}"
+        }
+      }
+    }
+  ]
+}

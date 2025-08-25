@@ -1,0 +1,18 @@
+{
+  "Version": "2012-10-17",
+  "Statment": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam:${ACCOUNT_NUMBER}:oicd-provider/${oidc_id}"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "${oidc_id}:aud": "sts:amazon.com",
+          "${oidc_id}:sub": "system:serviceaccount:${EKS_NAMESPACE}:${SERVICE_ACCOUNT}"
+        }
+      }
+    }
+  ]
+}

@@ -56,8 +56,9 @@ aws iam attach-role-policy \
 
 eksctl create cluster --name=${EKS_CLUSTER_NAME} --enable-auto-mode
 
-eksctl create cluster -f create_cluster.yaml
-
+envsubset cluster.yaml > cluster_env.yaml
+eksctl create cluster -f cluster_env.yaml
+rm cluster_env.yaml
 
 FINAL_STATE=("ACTIVE" "FAILED")
 while true; do
@@ -88,7 +89,9 @@ if [ -z "$provider" ]; then
 fi
 
 # add new users
-eksctl create iamidentitymapping -f user_identity_mappings.yaml
+emvsubset user_identity_mapping.yaml > user_identity_mapping_env.yaml
+eksctl create iamidentitymapping -f user_identity_mapping_env.yaml
+rm user_identity_mapping_env.yaml
 
 #aws eks create-cluster \
 #  --enable-auto-mode \

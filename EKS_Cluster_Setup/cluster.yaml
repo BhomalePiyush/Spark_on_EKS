@@ -19,8 +19,8 @@ accessConfig:
 
 vpc:
   id: "<asociated VPC ID>"
-  controlPlaneSubnetIDs: [ subnet-1234, subnet-5678 ]
-  controlPlaneSecurityGroupIDs: [ sg-1234, sg-5678 ]
+  controlPlaneSubnetIDs: [ <subnet-1234>, <subnet-5678> ]
+  controlPlaneSecurityGroupIDs: [ <sg-1234>, <sg-5678> ]
 #  securityGroup:
 #  subnets:
 #    public:

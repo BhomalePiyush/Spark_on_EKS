@@ -1,0 +1,96 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: pyspark-pi
+  namespace: ns-spark-on-eks
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  imagePullPolicy: Always
+  image: "${ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amamzonaws.com/${EMR_DOCKER_IMAGE}"
+#  mainClass: org.apache.spark.examples.SparkPi
+  mainApplicationFile: "s3://${BUCKET_NAME}/Test/pi.py"
+  dynamicSizing:
+    mode: Off
+    signature: "my-signature"
+  arguments:
+    - "10"
+  sparkVersion: "3.5.4"
+  emrReleaseLabel: emr-7.8.0-latest
+  executionRoleArn: arn:aws:iam::${ACCOUNT_NUMBER}:role/${SPARK_ON_EKS_ROLE_NAME}
+  hadoopConf:
+    # EMRFS filesystem
+    fs.s3.customAWSCredentialsProvider: com.amazonaws.auth.WebIdentityTokenCredentialsProvider
+    fs.s3.impl: com.amazon.ws.emr.hadoop.fs.EmrFileSystem
+    fs.AbstractFileSystem.s3.impl: org.apache.hadoop.fs.s3.EMRFSDelegate
+    fs.s3.buffer.dir: /mnt/s3
+    fs.s3.getObject.initialSocketTimeoutMilliseconds: "2000"
+    mapreduce.fileoutputcommitter.algorithm.version.emr_internal_use_only.EmrFileSystem: "2"
+    mapreduce.fileoutputcommitter.cleanup-failures.ignored.emr_internal_use_only.EmrFileSystem: "true"
+  sparkConf:
+    # Required for EMR Runtime
+    spark.driver.extraClassPath: /usr/lib/hadoop-lzo/lib/*:/usr/lib/hadoop/hadoop-aws.jar:/usr/share/aws/aws-java-sdk/*:/usr/share/aws/emr/emrfs/conf:/usr/share/aws/emr/emrfs/lib/*:/usr/share/aws/emr/emrfs/auxlib/*:/usr/share/aws/emr/security/conf:/usr/share/aws/emr/security/lib/*:/usr/share/aws/hmclient/lib/aws-glue-datacatalog-spark-client.jar:/usr/share/java/Hive-JSON-Serde/hive-openx-serde.jar:/usr/share/aws/sagemaker-spark-sdk/lib/sagemaker-spark-sdk.jar:/home/hadoop/extrajars/*
+    spark.driver.extraLibraryPath: /usr/lib/hadoop/lib/native:/usr/lib/hadoop-lzo/lib/native:/docker/usr/lib/hadoop/lib/native:/docker/usr/lib/hadoop-lzo/lib/native
+    spark.executor.extraClassPath: /usr/lib/hadoop-lzo/lib/*:/usr/lib/hadoop/hadoop-aws.jar:/usr/share/aws/aws-java-sdk/*:/usr/share/aws/emr/emrfs/conf:/usr/share/aws/emr/emrfs/lib/*:/usr/share/aws/emr/emrfs/auxlib/*:/usr/share/aws/emr/security/conf:/usr/share/aws/emr/security/lib/*:/usr/share/aws/hmclient/lib/aws-glue-datacatalog-spark-client.jar:/usr/share/java/Hive-JSON-Serde/hive-openx-serde.jar:/usr/share/aws/sagemaker-spark-sdk/lib/sagemaker-spark-sdk.jar:/home/hadoop/extrajars/*
+    spark.executor.extraLibraryPath: /usr/lib/hadoop/lib/native:/usr/lib/hadoop-lzo/lib/native:/docker/usr/lib/hadoop/lib/native:/docker/usr/lib/hadoop-lzo/lib/native
+    spark.ui.port: "4041"
+  restartPolicy:
+    type: OnFailure
+    onFailureRetries: 3
+    onFailureRetryInterval: 20
+    onSubmissionFailureRetries: 2
+    onSubmissionFailureRetryInterval: 5
+  volumes:
+    - name: "test-volume"
+      hostPath:
+        path: "/tmp"
+        type: Directory
+  driver:
+    cores: 1
+    coreLimit: "2"
+    memory: "15G"
+    serviceAccount: aws-resource-access
+    labels:
+      version: 3.5.4
+    volumeMounts:
+      - name: "test-volume"
+        mountPath: "/tmp"
+    affinity:
+      nodeAffinity:
+        requestDuringScheduleIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: karpenter.sh/nodepool
+                  operator: In
+                  values:
+                    - general-purpose
+  executor:
+    cores: 1
+    instances: 3
+    memory: "8g"
+    labels:
+      version: 3.5.4
+    volumeMounts:
+      - name: "test-volume"
+        mountPath: "/tmp"
+    affinity:
+      nodeAffinity:
+        requestDuringScheduleIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: karpenter.sh/nodepool
+                  operator: In
+                  values:
+                    - general-purpose
+  monitoringConfiguration:
+#    image: "log_agent_image"
+    s3MonitoringConfiguration:
+      logUri: "s3://${BUCKET_NAME}/logs/"
+#    sideCarResources:
+#      limits:
+#        cpuLimit: "500m"
+#        memoryLimit: "250Mi"
+#    containerLogRotationConfiguration:
+#      rotationSize: "2GB"
+#      maxFilesToKeep: "10"
